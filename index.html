@@ -826,7 +826,7 @@
       console.warn('Chart.js is loading...');
     }
 
-    // Main metrics swimlane (last week vs YoY) - 6 metrics
+    // Main metrics swimlane (last week vs YoY) - 7 metrics
     const mainMetrics = [
       {
         name: 'Absolute number of checkouts',
@@ -834,6 +834,14 @@
         lastYear: 820000,
         change: 3.7,
         isNumber: true
+      },
+      {
+        name: 'Processed GMV in EUR',
+        lastWeek: 60000,
+        lastYear: 58000,
+        change: 3.4,
+        isNumber: true,
+        isCurrency: true
       },
       {
         name: 'Checkout-to-booking conversion rate',
@@ -883,36 +891,83 @@
       { week: 'Jan 26', lastYear: 56.4, thisYear: 57.7 },
     ];
 
-    // Check availability to checkout breakdown
-    const checkAvailabilityToCheckoutData = [
-      { week: 'Nov 10', checkAvailToActionLY: 21.5, checkAvailToActionTY: 22.2, cartToCheckoutLY: 74.5, cartToCheckoutTY: 75.1 },
-      { week: 'Nov 17', checkAvailToActionLY: 21.6, checkAvailToActionTY: 22.3, cartToCheckoutLY: 74.6, cartToCheckoutTY: 75.2 },
-      { week: 'Nov 24', checkAvailToActionLY: 21.7, checkAvailToActionTY: 22.4, cartToCheckoutLY: 74.7, cartToCheckoutTY: 75.3 },
-      { week: 'Dec 1', checkAvailToActionLY: 21.8, checkAvailToActionTY: 22.5, cartToCheckoutLY: 74.8, cartToCheckoutTY: 75.4 },
-      { week: 'Dec 8', checkAvailToActionLY: 21.9, checkAvailToActionTY: 22.6, cartToCheckoutLY: 74.9, cartToCheckoutTY: 75.5 },
-      { week: 'Dec 15', checkAvailToActionLY: 22.0, checkAvailToActionTY: 22.7, cartToCheckoutLY: 75.0, cartToCheckoutTY: 75.6 },
-      { week: 'Dec 22', checkAvailToActionLY: 22.1, checkAvailToActionTY: 22.8, cartToCheckoutLY: 75.1, cartToCheckoutTY: 75.7 },
-      { week: 'Dec 29', checkAvailToActionLY: 22.2, checkAvailToActionTY: 22.9, cartToCheckoutLY: 75.2, cartToCheckoutTY: 75.8 },
-      { week: 'Jan 5', checkAvailToActionLY: 22.3, checkAvailToActionTY: 23.0, cartToCheckoutLY: 75.3, cartToCheckoutTY: 75.9 },
-      { week: 'Jan 12', checkAvailToActionLY: 22.4, checkAvailToActionTY: 23.1, cartToCheckoutLY: 75.4, cartToCheckoutTY: 76.0 },
-      { week: 'Jan 19', checkAvailToActionLY: 22.5, checkAvailToActionTY: 23.2, cartToCheckoutLY: 75.5, cartToCheckoutTY: 76.1 },
-      { week: 'Jan 26', checkAvailToActionLY: 22.6, checkAvailToActionTY: 23.3, cartToCheckoutLY: 75.6, cartToCheckoutTY: 76.2 },
+    // Check availability to payment page conversion (single conversion)
+    const checkAvailabilityToPaymentPageData = [
+      { week: 'Nov 10', lastYear: 16.0, thisYear: 16.5 },
+      { week: 'Nov 17', lastYear: 16.1, thisYear: 16.6 },
+      { week: 'Nov 24', lastYear: 16.2, thisYear: 16.7 },
+      { week: 'Dec 1', lastYear: 16.3, thisYear: 16.8 },
+      { week: 'Dec 8', lastYear: 16.4, thisYear: 16.9 },
+      { week: 'Dec 15', lastYear: 16.5, thisYear: 17.0 },
+      { week: 'Dec 22', lastYear: 16.6, thisYear: 17.1 },
+      { week: 'Dec 29', lastYear: 16.7, thisYear: 17.2 },
+      { week: 'Jan 5', lastYear: 16.8, thisYear: 17.3 },
+      { week: 'Jan 12', lastYear: 16.9, thisYear: 17.4 },
+      { week: 'Jan 19', lastYear: 17.0, thisYear: 17.5 },
+      { week: 'Jan 26', lastYear: 17.1, thisYear: 17.6 },
     ];
 
-    // Payment page-to-booking conversion rate breakdown
-    const paymentPageToBookingBreakdownData = [
-      { week: 'Nov 10', paymentInitiationLY: 79.5, paymentInitiationTY: 80.2, paymentSuccessLY: 96.5, paymentSuccessTY: 97.1 },
-      { week: 'Nov 17', paymentInitiationLY: 79.6, paymentInitiationTY: 80.3, paymentSuccessLY: 96.6, paymentSuccessTY: 97.2 },
-      { week: 'Nov 24', paymentInitiationLY: 79.7, paymentInitiationTY: 80.4, paymentSuccessLY: 96.7, paymentSuccessTY: 97.3 },
-      { week: 'Dec 1', paymentInitiationLY: 79.8, paymentInitiationTY: 80.5, paymentSuccessLY: 96.8, paymentSuccessTY: 97.4 },
-      { week: 'Dec 8', paymentInitiationLY: 79.9, paymentInitiationTY: 80.6, paymentSuccessLY: 96.9, paymentSuccessTY: 97.5 },
-      { week: 'Dec 15', paymentInitiationLY: 80.0, paymentInitiationTY: 80.7, paymentSuccessLY: 97.0, paymentSuccessTY: 97.6 },
-      { week: 'Dec 22', paymentInitiationLY: 80.1, paymentInitiationTY: 80.8, paymentSuccessLY: 97.1, paymentSuccessTY: 97.7 },
-      { week: 'Dec 29', paymentInitiationLY: 80.2, paymentInitiationTY: 80.9, paymentSuccessLY: 97.2, paymentSuccessTY: 97.8 },
-      { week: 'Jan 5', paymentInitiationLY: 80.3, paymentInitiationTY: 81.0, paymentSuccessLY: 97.3, paymentSuccessTY: 97.9 },
-      { week: 'Jan 12', paymentInitiationLY: 80.4, paymentInitiationTY: 81.1, paymentSuccessLY: 97.4, paymentSuccessTY: 98.0 },
-      { week: 'Jan 19', paymentInitiationLY: 80.5, paymentInitiationTY: 81.2, paymentSuccessLY: 97.5, paymentSuccessTY: 98.1 },
-      { week: 'Jan 26', paymentInitiationLY: 80.6, paymentInitiationTY: 81.3, paymentSuccessLY: 97.6, paymentSuccessTY: 98.2 },
+    // Payment page to booking conversion (single conversion)
+    const paymentPageToBookingData = [
+      { week: 'Nov 10', lastYear: 76.0, thisYear: 77.0 },
+      { week: 'Nov 17', lastYear: 76.1, thisYear: 77.1 },
+      { week: 'Nov 24', lastYear: 76.2, thisYear: 77.2 },
+      { week: 'Dec 1', lastYear: 76.3, thisYear: 77.3 },
+      { week: 'Dec 8', lastYear: 76.4, thisYear: 77.4 },
+      { week: 'Dec 15', lastYear: 76.5, thisYear: 77.5 },
+      { week: 'Dec 22', lastYear: 76.6, thisYear: 77.6 },
+      { week: 'Dec 29', lastYear: 76.7, thisYear: 77.7 },
+      { week: 'Jan 5', lastYear: 76.8, thisYear: 77.8 },
+      { week: 'Jan 12', lastYear: 76.9, thisYear: 77.9 },
+      { week: 'Jan 19', lastYear: 77.0, thisYear: 78.0 },
+      { week: 'Jan 26', lastYear: 77.1, thisYear: 78.1 },
+    ];
+
+    // Check availability to payment breakdown (for checkout section) - two conversions
+    const checkAvailabilityToPaymentBreakdownData = [
+      { week: 'Nov 10', checkAvailToCheckoutLY: 22.0, checkAvailToCheckoutTY: 22.2, checkoutToPaymentLY: 75.0, checkoutToPaymentTY: 75.1 },
+      { week: 'Nov 17', checkAvailToCheckoutLY: 22.1, checkAvailToCheckoutTY: 22.3, checkoutToPaymentLY: 75.1, checkoutToPaymentTY: 75.2 },
+      { week: 'Nov 24', checkAvailToCheckoutLY: 22.2, checkAvailToCheckoutTY: 22.4, checkoutToPaymentLY: 75.2, checkoutToPaymentTY: 75.3 },
+      { week: 'Dec 1', checkAvailToCheckoutLY: 22.3, checkAvailToCheckoutTY: 22.5, checkoutToPaymentLY: 75.3, checkoutToPaymentTY: 75.4 },
+      { week: 'Dec 8', checkAvailToCheckoutLY: 22.4, checkAvailToCheckoutTY: 22.6, checkoutToPaymentLY: 75.4, checkoutToPaymentTY: 75.5 },
+      { week: 'Dec 15', checkAvailToCheckoutLY: 22.5, checkAvailToCheckoutTY: 22.7, checkoutToPaymentLY: 75.5, checkoutToPaymentTY: 75.6 },
+      { week: 'Dec 22', checkAvailToCheckoutLY: 22.6, checkAvailToCheckoutTY: 22.8, checkoutToPaymentLY: 75.6, checkoutToPaymentTY: 75.7 },
+      { week: 'Dec 29', checkAvailToCheckoutLY: 22.7, checkAvailToCheckoutTY: 22.9, checkoutToPaymentLY: 75.7, checkoutToPaymentTY: 75.8 },
+      { week: 'Jan 5', checkAvailToCheckoutLY: 22.8, checkAvailToCheckoutTY: 23.0, checkoutToPaymentLY: 75.8, checkoutToPaymentTY: 75.9 },
+      { week: 'Jan 12', checkAvailToCheckoutLY: 22.9, checkAvailToCheckoutTY: 23.1, checkoutToPaymentLY: 75.9, checkoutToPaymentTY: 76.0 },
+      { week: 'Jan 19', checkAvailToCheckoutLY: 23.0, checkAvailToCheckoutTY: 23.2, checkoutToPaymentLY: 76.0, checkoutToPaymentTY: 76.1 },
+      { week: 'Jan 26', checkAvailToCheckoutLY: 23.1, checkAvailToCheckoutTY: 23.3, checkoutToPaymentLY: 76.1, checkoutToPaymentTY: 76.2 },
+    ];
+
+    // Payment initiation and success rates (for payments section)
+    const paymentInitiationRateData = [
+      { week: 'Nov 10', lastYear: 79.5, thisYear: 80.2 },
+      { week: 'Nov 17', lastYear: 79.6, thisYear: 80.3 },
+      { week: 'Nov 24', lastYear: 79.7, thisYear: 80.4 },
+      { week: 'Dec 1', lastYear: 79.8, thisYear: 80.5 },
+      { week: 'Dec 8', lastYear: 79.9, thisYear: 80.6 },
+      { week: 'Dec 15', lastYear: 80.0, thisYear: 80.7 },
+      { week: 'Dec 22', lastYear: 80.1, thisYear: 80.8 },
+      { week: 'Dec 29', lastYear: 80.2, thisYear: 80.9 },
+      { week: 'Jan 5', lastYear: 80.3, thisYear: 81.0 },
+      { week: 'Jan 12', lastYear: 80.4, thisYear: 81.1 },
+      { week: 'Jan 19', lastYear: 80.5, thisYear: 81.2 },
+      { week: 'Jan 26', lastYear: 80.6, thisYear: 81.3 },
+    ];
+
+    const paymentSuccessRateData = [
+      { week: 'Nov 10', lastYear: 96.5, thisYear: 97.1 },
+      { week: 'Nov 17', lastYear: 96.6, thisYear: 97.2 },
+      { week: 'Nov 24', lastYear: 96.7, thisYear: 97.3 },
+      { week: 'Dec 1', lastYear: 96.8, thisYear: 97.4 },
+      { week: 'Dec 8', lastYear: 96.9, thisYear: 97.5 },
+      { week: 'Dec 15', lastYear: 97.0, thisYear: 97.6 },
+      { week: 'Dec 22', lastYear: 97.1, thisYear: 97.7 },
+      { week: 'Dec 29', lastYear: 97.2, thisYear: 97.8 },
+      { week: 'Jan 5', lastYear: 97.3, thisYear: 97.9 },
+      { week: 'Jan 12', lastYear: 97.4, thisYear: 98.0 },
+      { week: 'Jan 19', lastYear: 97.5, thisYear: 98.1 },
+      { week: 'Jan 26', lastYear: 97.6, thisYear: 98.2 },
     ];
 
     // Vertical funnel data (last 7 days + YoY) - with absolute numbers
@@ -922,14 +977,14 @@
         checkout: { pct: 22, count: 880000 },
         paymentPage: { pct: 16.5, count: 660000 },
         paymentInitiation: { pct: 13.2, count: 528000 },
-        booking: { pct: 7.5, count: 300000 }
+        booking: { pct: 12.54, count: 501600 } // ~95% of payment initiation
       },
       lastYear: {
         checkAvailability: { pct: 100, count: 3800000 },
         checkout: { pct: 21.5, count: 817000 },
         paymentPage: { pct: 16.0, count: 608000 },
         paymentInitiation: { pct: 12.8, count: 486400 },
-        booking: { pct: 7.2, count: 273600 }
+        booking: { pct: 12.16, count: 462080 } // ~95% of payment initiation
       }
     };
 
@@ -980,7 +1035,8 @@
     // Text metrics for checkout breakdown
     const checkoutTextMetrics = {
       loggedInCheckouts: { last7Days: 42.3, lastYear: 38.9, change: 8.7 },
-      createdAccounts: { last7Days: 18.5, lastYear: 16.2, change: 14.2 }
+      createdAccounts: { last7Days: 18.5, lastYear: 16.2, change: 14.2 },
+      couponUsage: { last7Days: 13.8, lastYear: 12.6, change: 9.5 }
     };
 
     // Payment terms split (Pay now / Pay later) - L12W + YoY
@@ -1048,7 +1104,7 @@
         change: -7.9
       },
       {
-        name: '% of countries with payment→booking conversion below 80%',
+        name: '% of core corridor markets with conversion below 90%',
         lastWeek: 12.5,
         lastYear: 15.2,
         change: -17.8
@@ -1149,12 +1205,6 @@
             </select>
           </div>
           <div className="filter-group">
-            <label>Channel</label>
-            <select className="filter-select">
-              <option>is any value</option>
-            </select>
-          </div>
-          <div className="filter-group">
             <label>Platform</label>
             <select className="filter-select">
               <option>is any value</option>
@@ -1165,17 +1215,23 @@
             </select>
           </div>
           <div className="filter-group">
+            <label>Source Market</label>
+            <select className="filter-select">
+              <option>is any value</option>
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>Destination Market</label>
+            <select className="filter-select">
+              <option>is any value</option>
+            </select>
+          </div>
+          <div className="filter-group">
             <label>Customer Type</label>
             <select className="filter-select">
               <option>is any value</option>
               <option>New Customer</option>
               <option>Repeat Customer</option>
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>User locale</label>
-            <select className="filter-select">
-              <option>is any value</option>
             </select>
           </div>
         </div>
@@ -1190,11 +1246,11 @@
               <div className="metric-name">{metric.name}</div>
               <div className="metric-values">
                 <div className="metric-main-value" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {metric.isNumber ? formatNumber(metric.lastWeek) : metric.lastWeek.toFixed(1) + '%'}
+                  {metric.isNumber ? (metric.isCurrency ? formatNumber(metric.lastWeek) + ' EUR' : formatNumber(metric.lastWeek)) : metric.lastWeek.toFixed(1) + '%'}
                 </div>
                 <div className="metric-comparison">
                   <span className="metric-yoy">
-                    YoY: {metric.isNumber ? formatNumber(metric.lastYear) : metric.lastYear.toFixed(1) + '%'}
+                    YoY: {metric.isNumber ? (metric.isCurrency ? formatNumber(metric.lastYear) + ' EUR' : formatNumber(metric.lastYear)) : metric.lastYear.toFixed(1) + '%'}
                   </span>
                   <span className={`metric-change ${metric.change >= 0 ? 'positive' : 'negative'}`}>
                     {metric.change > 0 ? '+' : ''}{metric.change.toFixed(1)}%
@@ -1370,15 +1426,15 @@
       );
     }
 
-    function CheckAvailabilityToCheckoutChart() {
+    function CheckAvailabilityToPaymentPageChart() {
       const chartRef = useRef(null);
       const chartInstanceRef = useRef(null);
 
       useEffect(() => {
         const datasets = [
           {
-            label: 'Check availability → Add to cart/Checkout (Last Year)',
-            data: checkAvailabilityToCheckoutData.map(d => d.checkAvailToActionLY),
+            label: 'Last Year',
+            data: checkAvailabilityToPaymentPageData.map(d => d.lastYear),
             borderColor: '#fbbc04',
             backgroundColor: 'transparent',
             borderWidth: 2,
@@ -1391,8 +1447,8 @@
             tension: 0.4
           },
           {
-            label: 'Check availability → Add to cart/Checkout (This Year)',
-            data: checkAvailabilityToCheckoutData.map(d => d.checkAvailToActionTY),
+            label: 'This Year',
+            data: checkAvailabilityToPaymentPageData.map(d => d.thisYear),
             borderColor: '#ea4335',
             backgroundColor: 'transparent',
             borderWidth: 2,
@@ -1402,43 +1458,16 @@
             pointBorderColor: '#ffffff',
             pointBorderWidth: 1.5,
             tension: 0.4
-          },
-          {
-            label: 'Add to cart → Checkout (Last Year)',
-            data: checkAvailabilityToCheckoutData.map(d => d.cartToCheckoutLY),
-            borderColor: '#fbbc04',
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            borderDash: [6, 4],
-            pointRadius: 2.5,
-            pointHoverRadius: 4,
-            pointBackgroundColor: '#fbbc04',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 1.5,
-            tension: 0.4
-          },
-          {
-            label: 'Add to cart → Checkout (This Year)',
-            data: checkAvailabilityToCheckoutData.map(d => d.cartToCheckoutTY),
-            borderColor: '#4285f4',
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            pointRadius: 3,
-            pointHoverRadius: 4,
-            pointBackgroundColor: '#4285f4',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 1.5,
-            tension: 0.4
           }
         ];
 
         createChart(
           chartRef,
           chartInstanceRef,
-          checkAvailabilityToCheckoutData,
-          checkAvailabilityToCheckoutData.map(d => d.week),
+          checkAvailabilityToPaymentPageData,
+          checkAvailabilityToPaymentPageData.map(d => d.week),
           datasets,
-          { title: 'Conversion Rate (%)', min: 20, max: 25, stepSize: 1 }
+          { title: 'Conversion Rate (%)', min: 15, max: 18, stepSize: 0.5 }
         );
 
         return () => {
@@ -1455,15 +1484,15 @@
       );
     }
 
-    function PaymentPageToBookingBreakdownChart() {
+    function PaymentPageToBookingChart() {
       const chartRef = useRef(null);
       const chartInstanceRef = useRef(null);
 
       useEffect(() => {
         const datasets = [
           {
-            label: 'Payment initiation rate (Last Year)',
-            data: paymentPageToBookingBreakdownData.map(d => d.paymentInitiationLY),
+            label: 'Last Year',
+            data: paymentPageToBookingData.map(d => d.lastYear),
             borderColor: '#fbbc04',
             backgroundColor: 'transparent',
             borderWidth: 2,
@@ -1476,8 +1505,66 @@
             tension: 0.4
           },
           {
-            label: 'Payment initiation rate (This Year)',
-            data: paymentPageToBookingBreakdownData.map(d => d.paymentInitiationTY),
+            label: 'This Year',
+            data: paymentPageToBookingData.map(d => d.thisYear),
+            borderColor: '#ea4335',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#ea4335',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          }
+        ];
+
+        createChart(
+          chartRef,
+          chartInstanceRef,
+          paymentPageToBookingData,
+          paymentPageToBookingData.map(d => d.week),
+          datasets,
+          { title: 'Conversion Rate (%)', min: 75, max: 79, stepSize: 1 }
+        );
+
+        return () => {
+          if (chartInstanceRef.current) {
+            chartInstanceRef.current.destroy();
+          }
+        };
+      }, []);
+
+      return (
+        <div className="apv-chart">
+          <canvas ref={chartRef}></canvas>
+        </div>
+      );
+    }
+
+    function CheckAvailabilityToPaymentBreakdownChart() {
+      const chartRef = useRef(null);
+      const chartInstanceRef = useRef(null);
+
+      useEffect(() => {
+        const datasets = [
+          {
+            label: 'Check availability → Checkout (Last Year)',
+            data: checkAvailabilityToPaymentBreakdownData.map(d => d.checkAvailToCheckoutLY),
+            borderColor: '#fbbc04',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            pointRadius: 2.5,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#fbbc04',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          },
+          {
+            label: 'Check availability → Checkout (This Year)',
+            data: checkAvailabilityToPaymentBreakdownData.map(d => d.checkAvailToCheckoutTY),
             borderColor: '#ea4335',
             backgroundColor: 'transparent',
             borderWidth: 2,
@@ -1489,8 +1576,8 @@
             tension: 0.4
           },
           {
-            label: 'Payment success rate (Last Year)',
-            data: paymentPageToBookingBreakdownData.map(d => d.paymentSuccessLY),
+            label: 'Checkout → Payment page (Last Year)',
+            data: checkAvailabilityToPaymentBreakdownData.map(d => d.checkoutToPaymentLY),
             borderColor: '#fbbc04',
             backgroundColor: 'transparent',
             borderWidth: 2,
@@ -1503,14 +1590,14 @@
             tension: 0.4
           },
           {
-            label: 'Payment success rate (This Year)',
-            data: paymentPageToBookingBreakdownData.map(d => d.paymentSuccessTY),
-            borderColor: '#34a853',
+            label: 'Checkout → Payment page (This Year)',
+            data: checkAvailabilityToPaymentBreakdownData.map(d => d.checkoutToPaymentTY),
+            borderColor: '#4285f4',
             backgroundColor: 'transparent',
             borderWidth: 2,
             pointRadius: 3,
             pointHoverRadius: 4,
-            pointBackgroundColor: '#34a853',
+            pointBackgroundColor: '#4285f4',
             pointBorderColor: '#ffffff',
             pointBorderWidth: 1.5,
             tension: 0.4
@@ -1520,10 +1607,242 @@
         createChart(
           chartRef,
           chartInstanceRef,
-          paymentPageToBookingBreakdownData,
-          paymentPageToBookingBreakdownData.map(d => d.week),
+          checkAvailabilityToPaymentBreakdownData,
+          checkAvailabilityToPaymentBreakdownData.map(d => d.week),
           datasets,
-          { title: 'Conversion Rate (%)', min: 20, max: 97, stepSize: 5 }
+          { title: 'Conversion Rate (%)', min: 20, max: 80, stepSize: 10 }
+        );
+
+        return () => {
+          if (chartInstanceRef.current) {
+            chartInstanceRef.current.destroy();
+          }
+        };
+      }, []);
+
+      return (
+        <div className="apv-chart">
+          <canvas ref={chartRef}></canvas>
+        </div>
+      );
+    }
+
+    function PaymentInitiationRateChart() {
+      const chartRef = useRef(null);
+      const chartInstanceRef = useRef(null);
+
+      useEffect(() => {
+        const datasets = [
+          {
+            label: 'Last Year',
+            data: paymentInitiationRateData.map(d => d.lastYear),
+            borderColor: '#fbbc04',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            pointRadius: 2.5,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#fbbc04',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          },
+          {
+            label: 'This Year',
+            data: paymentInitiationRateData.map(d => d.thisYear),
+            borderColor: '#ea4335',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#ea4335',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          }
+        ];
+
+        createChart(
+          chartRef,
+          chartInstanceRef,
+          paymentInitiationRateData,
+          paymentInitiationRateData.map(d => d.week),
+          datasets,
+          { title: 'Rate (%)', min: 79, max: 82, stepSize: 0.5 }
+        );
+
+        return () => {
+          if (chartInstanceRef.current) {
+            chartInstanceRef.current.destroy();
+          }
+        };
+      }, []);
+
+      return (
+        <div className="apv-chart">
+          <canvas ref={chartRef}></canvas>
+        </div>
+      );
+    }
+
+    function PaymentSuccessRateChart() {
+      const chartRef = useRef(null);
+      const chartInstanceRef = useRef(null);
+
+      useEffect(() => {
+        const datasets = [
+          {
+            label: 'Last Year',
+            data: paymentSuccessRateData.map(d => d.lastYear),
+            borderColor: '#fbbc04',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            pointRadius: 2.5,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#fbbc04',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          },
+          {
+            label: 'This Year',
+            data: paymentSuccessRateData.map(d => d.thisYear),
+            borderColor: '#ea4335',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#ea4335',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          }
+        ];
+
+        createChart(
+          chartRef,
+          chartInstanceRef,
+          paymentSuccessRateData,
+          paymentSuccessRateData.map(d => d.week),
+          datasets,
+          { title: 'Rate (%)', min: 96, max: 99, stepSize: 0.5 }
+        );
+
+        return () => {
+          if (chartInstanceRef.current) {
+            chartInstanceRef.current.destroy();
+          }
+        };
+      }, []);
+
+      return (
+        <div className="apv-chart">
+          <canvas ref={chartRef}></canvas>
+        </div>
+      );
+    }
+
+    function LoggedInCheckoutsAndAccountsChart() {
+      const chartRef = useRef(null);
+      const chartInstanceRef = useRef(null);
+
+      // Data for logged-in checkouts and created accounts (L12W + YoY)
+      const loggedInCheckoutsData = [
+        { week: 'Nov 10', lastYear: 38.9, thisYear: 42.3 },
+        { week: 'Nov 17', lastYear: 39.0, thisYear: 42.4 },
+        { week: 'Nov 24', lastYear: 39.1, thisYear: 42.5 },
+        { week: 'Dec 1', lastYear: 39.2, thisYear: 42.6 },
+        { week: 'Dec 8', lastYear: 39.3, thisYear: 42.7 },
+        { week: 'Dec 15', lastYear: 39.4, thisYear: 42.8 },
+        { week: 'Dec 22', lastYear: 39.5, thisYear: 42.9 },
+        { week: 'Dec 29', lastYear: 39.6, thisYear: 43.0 },
+        { week: 'Jan 5', lastYear: 39.7, thisYear: 43.1 },
+        { week: 'Jan 12', lastYear: 39.8, thisYear: 43.2 },
+        { week: 'Jan 19', lastYear: 39.9, thisYear: 43.3 },
+        { week: 'Jan 26', lastYear: 40.0, thisYear: 43.4 },
+      ];
+
+      const createdAccountsData = [
+        { week: 'Nov 10', lastYear: 16.2, thisYear: 18.5 },
+        { week: 'Nov 17', lastYear: 16.3, thisYear: 18.6 },
+        { week: 'Nov 24', lastYear: 16.4, thisYear: 18.7 },
+        { week: 'Dec 1', lastYear: 16.5, thisYear: 18.8 },
+        { week: 'Dec 8', lastYear: 16.6, thisYear: 18.9 },
+        { week: 'Dec 15', lastYear: 16.7, thisYear: 19.0 },
+        { week: 'Dec 22', lastYear: 16.8, thisYear: 19.1 },
+        { week: 'Dec 29', lastYear: 16.9, thisYear: 19.2 },
+        { week: 'Jan 5', lastYear: 17.0, thisYear: 19.3 },
+        { week: 'Jan 12', lastYear: 17.1, thisYear: 19.4 },
+        { week: 'Jan 19', lastYear: 17.2, thisYear: 19.5 },
+        { week: 'Jan 26', lastYear: 17.3, thisYear: 19.6 },
+      ];
+
+      useEffect(() => {
+        const datasets = [
+          {
+            label: 'Share of logged-in checkouts (Last Year)',
+            data: loggedInCheckoutsData.map(d => d.lastYear),
+            borderColor: '#fbbc04',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            pointRadius: 2.5,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#fbbc04',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          },
+          {
+            label: 'Share of logged-in checkouts (This Year)',
+            data: loggedInCheckoutsData.map(d => d.thisYear),
+            borderColor: '#ea4335',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#ea4335',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          },
+          {
+            label: 'Share of created accounts (Last Year)',
+            data: createdAccountsData.map(d => d.lastYear),
+            borderColor: '#fbbc04',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            pointRadius: 2.5,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#fbbc04',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          },
+          {
+            label: 'Share of created accounts (This Year)',
+            data: createdAccountsData.map(d => d.thisYear),
+            borderColor: '#4285f4',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#4285f4',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            tension: 0.4
+          }
+        ];
+
+        createChart(
+          chartRef,
+          chartInstanceRef,
+          loggedInCheckoutsData,
+          loggedInCheckoutsData.map(d => d.week),
+          datasets,
+          { title: 'Share (%)', min: 15, max: 45, stepSize: 5 }
         );
 
         return () => {
@@ -1929,17 +2248,17 @@
           <div className="charts-row">
             <div className="chart-container">
               <div className="section-header" style={{ marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Check availability to checkout breakdown</h3>
+                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Check availability to payment page conversion</h3>
                 <p style={{ fontSize: '14px', color: '#5f6368' }}>Last 12 weeks vs the same period last year.</p>
               </div>
-              <CheckAvailabilityToCheckoutChart />
+              <CheckAvailabilityToPaymentPageChart />
             </div>
             <div className="chart-container">
               <div className="section-header" style={{ marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Payment page-to-booking conversion rate breakdown</h3>
+                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Payment page to booking conversion</h3>
                 <p style={{ fontSize: '14px', color: '#5f6368' }}>Last 12 weeks vs the same period last year.</p>
               </div>
-              <PaymentPageToBookingBreakdownChart />
+              <PaymentPageToBookingChart />
             </div>
           </div>
         </div>
@@ -1986,6 +2305,16 @@
                 YoY: {checkoutTextMetrics.createdAccounts.lastYear.toFixed(1)}%
                 <span className={`text-metric-change ${checkoutTextMetrics.createdAccounts.change >= 0 ? 'positive' : 'negative'}`}>
                   ({checkoutTextMetrics.createdAccounts.change > 0 ? '+' : ''}{checkoutTextMetrics.createdAccounts.change.toFixed(1)}%)
+                </span>
+              </div>
+            </div>
+            <div className="text-metric-item">
+              <div className="text-metric-label">Share of shopping carts with coupon/cash gift code</div>
+              <div className="text-metric-value">{checkoutTextMetrics.couponUsage.last7Days.toFixed(1)}%</div>
+              <div className="text-metric-yoy">
+                YoY: {checkoutTextMetrics.couponUsage.lastYear.toFixed(1)}%
+                <span className={`text-metric-change ${checkoutTextMetrics.couponUsage.change >= 0 ? 'positive' : 'negative'}`}>
+                  ({checkoutTextMetrics.couponUsage.change > 0 ? '+' : ''}{checkoutTextMetrics.couponUsage.change.toFixed(1)}%)
                 </span>
               </div>
             </div>
@@ -2095,7 +2424,7 @@
                   backgroundColor: '#4285f4'
                 },
                 {
-                  label: 'Klarna',
+                  label: 'BNPL',
                   data: paymentMethodsData.map(d => d.klarnaTY),
                   backgroundColor: '#e91e63'
                 },
@@ -2392,29 +2721,29 @@
           <div className="section-header">
             <h2>Checkout breakdown</h2>
           </div>
-          <div className="charts-row-checkout">
-            <CheckoutTextMetrics />
+          <div className="charts-row">
             <div className="chart-container">
               <div className="section-header" style={{ marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '16px', marginBottom: '8px' }}>Split by Add to cart / Book now</h3>
-                <p style={{ fontSize: '13px', color: '#666666' }}>Last 7 days + YoY percentage changes.</p>
+                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Check availability to payment breakdown</h3>
+                <p style={{ fontSize: '14px', color: '#5f6368' }}>Last 12 weeks vs the same period last year.</p>
               </div>
-              <CheckoutSplitChart />
+              <CheckAvailabilityToPaymentBreakdownChart />
             </div>
             <div className="chart-container">
               <div className="section-header" style={{ marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '16px', marginBottom: '8px' }}>Split by login type</h3>
-                <p style={{ fontSize: '13px', color: '#666666' }}>Last 7 days + YoY percentage changes.</p>
+                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Share of logged-in checkouts and share of created accounts</h3>
+                <p style={{ fontSize: '14px', color: '#5f6368' }}>Last 12 weeks vs the same period last year.</p>
+              </div>
+              <LoggedInCheckoutsAndAccountsChart />
+            </div>
+            <div className="chart-container">
+              <div className="section-header" style={{ marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Split by login type</h3>
+                <p style={{ fontSize: '14px', color: '#5f6368' }}>Last 7 days + YoY percentage changes.</p>
               </div>
               <LoginTypeChart />
             </div>
-            <div className="chart-container">
-              <div className="section-header" style={{ marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '16px', marginBottom: '8px' }}>Share of shopping carts with coupon/cash gift code</h3>
-                <p style={{ fontSize: '13px', color: '#666666' }}>Last 12 weeks vs the same period last year.</p>
-              </div>
-              <CouponUsageChart />
-            </div>
+            <CheckoutTextMetrics />
           </div>
         </div>
       );
@@ -2425,6 +2754,23 @@
         <div className="discover-section">
           <div className="section-header">
             <h2>Payments breakdown</h2>
+          </div>
+          <PaymentMetricsSwimlane />
+          <div className="charts-row">
+            <div className="chart-container">
+              <div className="section-header" style={{ marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Payment initiation rate</h3>
+                <p style={{ fontSize: '14px', color: '#5f6368' }}>Last 12 weeks vs the same period last year.</p>
+              </div>
+              <PaymentInitiationRateChart />
+            </div>
+            <div className="chart-container">
+              <div className="section-header" style={{ marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Payment success rate</h3>
+                <p style={{ fontSize: '14px', color: '#5f6368' }}>Last 12 weeks vs the same period last year.</p>
+              </div>
+              <PaymentSuccessRateChart />
+            </div>
           </div>
           <div className="charts-row">
             <div className="chart-container">
@@ -2492,13 +2838,15 @@
         <div className="dashboard">
           <DashboardHeader />
           <Filters />
+          <div className="section-header" style={{ textAlign: 'center', marginBottom: '16px' }}>
+            <h2>Transaction scorecard</h2>
+          </div>
           <MainMetricsSwimlane />
           <CheckoutToBookingSection />
           <TwoChartsRow1 />
           <TwoChartsRow2 />
           <CheckoutBreakdownSection />
           <PaymentsBreakdownSection />
-          <PaymentMetricsSwimlane />
           <ProcessorPerformanceSection />
           <TopCountriesSection />
         </div>
