@@ -19,10 +19,10 @@ export function useExperimentData() {
         if (cancelled) return;
         const meta = json.metadata || {};
         const dims = meta.dimensions || {};
-        const derivable = [
+          const derivable = [
           'bin_issuer_country_code', 'currency', 'routing_rule',
           'payment_initiator_type', 'payment_flow', 'challenge_issued',
-          'system_attempt_rank',
+          'system_attempt_rank', 'period',
         ];
         for (const dim of derivable) {
           if (!dims[dim] || dims[dim].length === 0) {

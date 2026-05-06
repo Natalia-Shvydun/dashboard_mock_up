@@ -26,6 +26,9 @@ export function filterCube(data, filters) {
     if (filters.systemAttemptRanks?.length > 0 && !filters.systemAttemptRanks.includes(row.system_attempt_rank)) {
       return false;
     }
+    if (filters.periods?.length > 0 && !filters.periods.includes(row.period)) {
+      return false;
+    }
     return true;
   });
 }

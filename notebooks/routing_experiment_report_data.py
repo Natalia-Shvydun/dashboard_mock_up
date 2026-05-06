@@ -23,7 +23,19 @@
 
 import json
 import datetime
+
+import numpy as np
+import pandas as pd
 from pyspark.sql import functions as F
+
+
+def _json_default(obj):
+    """Make json.dumps work with numpy scalars and pandas/Spark edge types."""
+    if isinstance(obj, (np.integer, np.floating, np.bool_)):
+        return obj.item()
+    if isinstance(obj, (datetime.date, datetime.datetime)):
+        return obj.isoformat()
+    raise TypeError(f"Object of type {type(obj)!r} is not JSON serializable")
 
 EXPERIMENT_ID = "pay-payment-orchestration-routing-in-house"
 ASSIGNMENT_START = "2026-04-02"
@@ -157,6 +169,9 @@ df = df_raw.withColumn(
 ).withColumn(
     "payment_processor",
     F.coalesce(F.col("payment_processor"), F.lit("none"))
+).withColumn(
+    "period",
+    F.when(F.month("payment_attempt_timestamp") <= 4, F.lit("april")).otherwise(F.lit("may"))
 )
 
 df.cache()
@@ -185,7 +200,7 @@ DIMENSION_COLS = [
     "payment_flow",
     "fraud_pre_auth_result",
     "challenge_issued",
-    "payment_attempt_date",
+    "period",
 ]
 
 cube = df.groupBy(DIMENSION_COLS).agg(
@@ -222,6 +237,7 @@ filter_dimensions = [
     "payment_flow",
     "challenge_issued",
     "system_attempt_rank",
+    "period",
 ]
 
 for dim in filter_dimensions:
@@ -253,7 +269,7 @@ metadata["visitor_sr"] = {
     for row in visitor_sr
 }
 
-print(json.dumps(metadata, indent=2))
+print(json.dumps(metadata, indent=2, default=_json_default))
 
 # COMMAND ----------
 
@@ -302,9 +318,12 @@ print(f"Collected {len(samples_list)} sample references")
 
 cube_pdf = cube.toPandas()
 
-for col in ["attempts", "successful", "sent_to_issuer", "three_ds_passed", "system_attempt_rank"]:
-    cube_pdf[col] = cube_pdf[col].astype(int)
-cube_pdf["is_first_attempt"] = cube_pdf["is_first_attempt"].astype(bool)
+int_cols = ["attempts", "successful", "sent_to_issuer", "three_ds_passed", "system_attempt_rank"]
+for col in int_cols:
+    # Spark sums can be null if all inputs were null; avoid IntCastingNaNError on astype(int)
+    cube_pdf[col] = pd.to_numeric(cube_pdf[col], errors="coerce").fillna(0).astype(np.int64)
+
+cube_pdf["is_first_attempt"] = cube_pdf["is_first_attempt"].fillna(False).astype(bool)
 
 data_records = cube_pdf.to_dict(orient="records")
 
@@ -314,18 +333,13 @@ output = {
     "samples": samples_list,
 }
 
-json_str = json.dumps(output, separators=(",", ":"))
-
-local_path = "/tmp/report_data.json"
-with open(local_path, "w") as f:
-    f.write(json_str)
+json_str = json.dumps(output, separators=(",", ":"), default=_json_default)
 
 dbfs_path = "dbfs:/tmp/report_data.json"
-dbutils.fs.put(dbfs_path.replace("dbfs:", ""), json_str, overwrite=True)
+dbutils.fs.put(dbfs_path, json_str, overwrite=True)
 
 file_size_mb = round(len(json_str) / (1024 * 1024), 2)
 print(f"Exported {len(data_records):,} cube rows ({file_size_mb} MB)")
-print(f"  Local:  {local_path}")
 print(f"  DBFS:   {dbfs_path}")
 print(f"\nAutomatic export:  ./scripts/export_data.sh")
 print(f"Manual:            databricks fs cp {dbfs_path} public/data.json --overwrite")

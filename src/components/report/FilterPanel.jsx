@@ -27,6 +27,7 @@ export default function FilterPanel({ filters, dimensions, onChange }) {
       initiatorType: 'CIT',
       firstAttemptOnly: true,
       systemAttemptRanks: [1],
+      periods: [],
     });
   };
 
@@ -62,6 +63,14 @@ export default function FilterPanel({ filters, dimensions, onChange }) {
               ))}
             </div>
           </FilterSection>
+
+          <MultiSelectSection
+            title="Period"
+            options={(dimensions?.period || []).sort()}
+            selected={filters.periods}
+            onToggle={(v) => toggleMulti('periods', v)}
+            labelFn={(v) => v === 'april' ? 'April (Apr 2–30)' : v === 'may' ? 'May (May 1+)' : v}
+          />
 
           <FilterSection title="Attempt Rank">
             <div className="filter-panel__toggles">

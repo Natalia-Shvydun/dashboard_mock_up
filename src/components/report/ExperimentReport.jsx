@@ -22,6 +22,7 @@ const DEFAULT_FILTERS = {
   initiatorType: 'CIT',
   firstAttemptOnly: true,
   systemAttemptRanks: [1],
+  periods: [],
 };
 
 export default function ExperimentReport() {
