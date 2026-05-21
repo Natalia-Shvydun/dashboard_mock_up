@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Metrics Framework</title>
+<style>
+  :root {
+    --bg: #ffffff; --text: #1d1d1f; --muted: #6e6e73;
+    --border: #e5e5e7; --surface: #f5f5f7;
+    --blue: #0071e3; --blue-light: #e8f0fe;
+    --green: #34c759; --green-light: #e8fae8;
+    --orange: #ff9500; --orange-light: #fff5e6;
+    --red: #ff3b30; --red-light: #ffe5e5;
+    --purple: #af52de; --purple-light: #f5e6ff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text); line-height: 1.6;
+    max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; background: var(--bg);
+  }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 20px; font-weight: 700; margin: 36px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; }
+  .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px;
+    border-radius: 10px; margin-left: 6px; vertical-align: middle;
+  }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-green { background: var(--green-light); color: #1a8d36; }
+  .badge-orange { background: var(--orange-light); color: #b36b00; }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  p { margin: 6px 0; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; }
+  th { background: var(--surface); font-weight: 600; text-align: left; padding: 9px 12px; border-bottom: 2px solid #d1d1d6; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  tr:hover td { background: #f0f0f2; }
+  td.right, th.right { text-align: right; }
+  td.center, th.center { text-align: center; }
+  .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+  code {
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
+    background: var(--surface); padding: 1px 5px; border-radius: 4px;
+  }
+  pre {
+    background: #1d1d1f; color: #f5f5f7; padding: 16px 20px; border-radius: 8px;
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
+    line-height: 1.5; overflow-x: auto; margin: 12px 0 20px;
+  }
+  pre .kw { color: #ff7ab2; }
+  pre .fn { color: #67b7ff; }
+  pre .str { color: #ff8170; }
+  pre .cmt { color: #6e6e73; }
+  .callout {
+    border-left: 4px solid var(--blue); background: var(--blue-light);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 13px;
+  }
+  .callout-warn { border-left-color: var(--orange); background: var(--orange-light); }
+  .callout-danger { border-left-color: var(--red); background: var(--red-light); }
+  .callout strong { display: block; margin-bottom: 4px; }
+  .ns-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .ns-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 20px;
+    background: var(--bg);
+  }
+  .ns-card-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .ns-card-metric { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .ns-card-formula { font-size: 13px; font-family: 'SF Mono', 'Fira Code', monospace; color: var(--blue); }
+  .ns-card-source { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .waterfall-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .wf-card {
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  }
+  .wf-card-header {
+    padding: 10px 16px; font-size: 13px; font-weight: 600;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .wf-card-body { padding: 12px 16px; }
+  .wf-card-body table { margin: 0; }
+  .wf-card-body td, .wf-card-body th { padding: 5px 8px; font-size: 12px; }
+  .stage1 .wf-card-header { background: var(--orange-light); }
+  .stage2 .wf-card-header { background: var(--blue-light); }
+  .stage3 .wf-card-header { background: var(--green-light); }
+  .stage4 .wf-card-header { background: var(--purple-light); }
+  .pipeline {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px 24px; margin: 16px 0;
+    background: var(--surface); font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px; line-height: 1.7; white-space: pre; overflow-x: auto;
+  }
+  .toc { margin: 20px 0; padding: 16px 20px; background: var(--surface); border-radius: 8px; }
+  .toc-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .toc a { font-size: 13px; color: var(--blue); text-decoration: none; display: block; padding: 2px 0; }
+  .toc a:hover { text-decoration: underline; }
+  .source-tag { font-size: 11px; font-weight: 500; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>Payment Metrics Framework</h1>
+<p class="subtitle">Canonical reference for all payment analytics at GetYourGuide</p>
+<p class="subtitle">Covers the funnel from landing on the payment page to completing payment</p>
+<p style="margin-top:8px"><span class="badge badge-blue">Primary source: production.payments.fact_payment_attempt</span></p>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <a href="#ns">1. North Star Metrics</a>
+  <a href="#robustness">2. Metric Robustness Ordering</a>
+  <a href="#area1">3. Area 1 — Payment Initiation</a>
+  <a href="#area2">4. Area 2 — Payment Success</a>
+  <a href="#waterfall">&nbsp;&nbsp;&nbsp;4.2 Attempt-Level Waterfall</a>
+  <a href="#rnpl">&nbsp;&nbsp;&nbsp;4.4 RNPL-Specific Metrics</a>
+  <a href="#costs">&nbsp;&nbsp;&nbsp;4.5 Payment Costs</a>
+  <a href="#dedup">5. Deduplication Rules</a>
+  <a href="#dims">6. Dimensions</a>
+  <a href="#migration">7. Column Migration</a>
+  <a href="#arch">8. Target Data Model Architecture</a>
+</div>
+
+<!-- ─── NORTH STAR ─────────────────────────────────────────── -->
+<h2 id="ns">1. North Star Metrics</h2>
+
+<div class="ns-grid">
+  <div class="ns-card">
+    <div class="ns-card-title">NS-1 <span class="badge badge-blue">Visitor</span></div>
+    <div class="ns-card-metric">Payment Page Conversion Rate</div>
+    <div class="ns-card-formula">visitors_booked / visitors_on_payment_page</div>
+    <div class="ns-card-source">Source: payment_initiation_events + session data</div>
+  </div>
+  <div class="ns-card">
+    <div class="ns-card-title">NS-2 <span class="badge badge-blue">Cart (agg)</span></div>
+    <div class="ns-card-metric">Payment Cost as % of GMV</div>
+    <div class="ns-card-formula">total_fee_eur / settled_gmv_eur</div>
+    <div class="ns-card-source">Source: fact_payment_attempt fee columns</div>
+  </div>
+</div>
+
+<h3>Guardrail Metrics</h3>
+<table>
+  <thead><tr><th>Guardrail</th><th>Metric</th><th>Definition</th></tr></thead>
+  <tbody>
+    <tr><td>Experience quality</td><td>Multi-Attempt Cart Rate</td><td>% of carts requiring more than one customer attempt</td></tr>
+    <tr><td>Experience quality</td><td>3DS Challenge Rate</td><td>% of 3DS-triggered attempts where a challenge was issued</td></tr>
+    <tr><td>Health</td><td>Core Corridor SR Floor</td><td>% of top-20 markets with first-attempt SR below 90%</td></tr>
+    <tr><td>Resilience</td><td>Routing Gap Rate</td><td>% of initiated attempts with <code>payment_processor IS NULL</code></td></tr>
+    <tr><td>Resilience</td><td>Processor Concentration (HHI)</td><td>Herfindahl-Hirschman Index across processors</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── ROBUSTNESS ─────────────────────────────────────────── -->
+<h2 id="robustness">2. Metric Robustness Ordering</h2>
+<p>Evaluate from <strong>most robust</strong> (least sensitive to retry noise) to <strong>most granular</strong> (most diagnostic detail). Start at L0 and drill down only when you see a signal.</p>
+
+<table>
+  <thead><tr><th class="center">Level</th><th>Metric</th><th>Grain</th><th>SQL Key / Dedup</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td class="center"><span class="badge badge-blue">L0</span></td><td><strong>Payment Page Conversion Rate</strong></td><td>Visitor</td><td class="mono">One row per visitor on payment page</td><td>North star; full funnel</td></tr>
+    <tr><td class="center"><span class="badge badge-blue">L1</span></td><td><strong>Visitor SR</strong></td><td>Visitor</td><td class="mono">COUNT(DISTINCT IF(success, visitor_id)) / COUNT(DISTINCT visitor_id)</td><td>Business outcome; masks retries</td></tr>
+    <tr><td class="center"><span class="badge badge-green">L2</span></td><td><strong>Cart SR</strong></td><td>Shopping cart</td><td class="mono">MAX(is_shopping_cart_successful) grouped by shopping_cart_id</td><td>Cart-level outcome</td></tr>
+    <tr><td class="center"><span class="badge badge-orange">L3</span></td><td><strong>First Customer Attempt SR</strong></td><td>First attempt/cart</td><td class="mono">customer_attempt_rank = 1</td><td>First-try quality; routing/fraud diagnostics</td></tr>
+    <tr><td class="center"><span class="badge badge-orange">L4</span></td><td><strong>All Customer Attempt SR</strong></td><td>All CIT attempts</td><td class="mono">No rank filter, count all CIT rows</td><td>Includes retry performance</td></tr>
+    <tr><td class="center"><span class="badge badge-red">L5</span></td><td><strong>System Attempt SR</strong></td><td>System-level hits</td><td class="mono">All rows including system retries</td><td>Routing/fallback diagnostics</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <strong>Divergence Patterns</strong>
+  <b>L3 negative, L1 flat:</b> Retries compensating; there IS a first-attempt problem<br>
+  <b>L5 negative, L3 flat:</b> Internal fallback/retry issue, not primary routing<br>
+  <b>All levels negative:</b> Real regression<br>
+  <b>L4 negative, driven by one country:</b> Drill into that market
+</div>
+
+<!-- ─── AREA 1 ─────────────────────────────────────────────── -->
+<h2 id="area1">3. Area 1 — Payment Initiation</h2>
+<p>User lands on the payment page &rarr; initiates at least one payment attempt</p>
+
+<h3>Metrics Available Today</h3>
+<table>
+  <thead><tr><th>Metric</th><th>Formula</th><th>Source</th><th>Dedup</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Payment Initiation Rate</strong></td><td class="mono">initiated_carts / payment_page_view_carts</td><td>fact_payment_attempt: COUNT DISTINCT <code>shopping_cart_id</code> WHERE <code>payment_initiated = 1</code></td><td>Group by <code>shopping_cart_id</code></td></tr>
+    <tr><td><strong>Payment Page Drop-off Rate</strong></td><td class="mono">1 - Payment Initiation Rate</td><td>Derived</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h3>Metrics Requiring Future Data Model <span class="badge badge-purple">fact_payment_page_visit</span></h3>
+<table>
+  <thead><tr><th>Metric</th><th>Formula</th><th>Required Data</th></tr></thead>
+  <tbody>
+    <tr><td>Payment Method Exploration Rate</td><td>% of visits interacting with &gt;1 payment method</td><td>Click-stream events</td></tr>
+    <tr><td>Payment Methods Visibility Rate</td><td>% of visits where all available methods are seen</td><td>Page render events</td></tr>
+    <tr><td>Currency Switch Rate</td><td>% of visits with &ge;1 currency switch</td><td>Event data</td></tr>
+    <tr><td>Payment Terms Switch Rate</td><td>% of visits with &ge;1 pay-now/pay-later toggle</td><td>Event data</td></tr>
+    <tr><td>Time to Payment Initiation</td><td>Median time from page load to first initiation</td><td>Page load + initiation timestamps</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── AREA 2 ─────────────────────────────────────────────── -->
+<h2 id="area2">4. Area 2 — Payment Success</h2>
+<p>User initiates a payment &rarr; payment is settled (or fails after retries)</p>
+
+<h3>4.1 Cart / Transaction Level (Business View)</h3>
+<table>
+  <thead><tr><th>Metric</th><th>Formula</th><th>SQL Pattern</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Cart Payment SR</strong></td><td class="mono">successful_carts / initiated_carts</td><td class="mono">COUNT(DISTINCT CASE WHEN is_shopping_cart_successful = 1 THEN shopping_cart_id END) / COUNT(DISTINCT CASE WHEN payment_initiated = 1 THEN shopping_cart_id END)</td></tr>
+    <tr><td><strong>Cart Outcome Distribution</strong></td><td>Share of carts by final state</td><td>Group by: paid / abandoned / fraud-blocked / 3DS-failed / issuer-declined / technical-error</td></tr>
+    <tr><td><strong>Multi-Attempt Cart Rate</strong></td><td class="mono">multi_carts / total_carts</td><td class="mono">COUNT(DISTINCT CASE WHEN max_rank &gt; 1 THEN shopping_cart_id END) / COUNT(DISTINCT shopping_cart_id)</td></tr>
+    <tr><td><strong>Retry Recovery Rate</strong></td><td class="mono">recovered / failed_first</td><td>Among carts where <code>customer_attempt_rank = 1</code> failed, % with <code>is_shopping_cart_successful = 1</code></td></tr>
+  </tbody>
+</table>
+
+<!-- ─── WATERFALL ───────────────────────────────────────────── -->
+<h3 id="waterfall">4.2 Attempt-Level Waterfall</h3>
+<p>Every payment attempt passes through a sequential pipeline. Decompose attempt SR into these stages to identify where failures occur.</p>
+<p class="source-tag">All metrics use <code>customer_attempt_rank = 1</code> AND <code>payment_initiator_type = 'CIT'</code> unless stated otherwise.</p>
+
+<div class="pipeline">Attempt initiated
+  │
+  ├─[1] Fraud Pre-Auth (Forter) ──────── fraud_pre_auth_result
+  │      ACCEPT  → proceed without 3DS
+  │      THREE_DS → go to 3DS
+  │      THREE_DS_EXEMPTION → skip 3DS, proceed
+  │      REFUSE  → blocked, attempt ends
+  │      NULL    → no Forter eval (MIT, some APMs)
+  │
+  ├─[2] 3DS Authentication ──────────── challenge_issued, is_three_ds_passed
+  │      Frictionless pass (challenge_issued = false)
+  │      Challenge issued (challenge_issued = true)
+  │        ├─ Challenge passed (three_ds_status = 'success')
+  │        └─ Challenge failed/abandoned (three_ds_status = 'failed')
+  │
+  ├─[3] Sent to Issuer ─────────────── sent_to_issuer
+  │      1 = submitted to issuer
+  │      0 = blocked before issuer (REFUSE + 3DS fail + routing gap)
+  │
+  └─[4] Issuer Authorization ───────── is_payment_attempt_successful
+         Authorized → success
+         Declined → error_code, error_type
+           ├─ Issuer decline (issuer_declined = 1)
+           ├─ Gateway rejected (gateway_rejected = 1)
+           └─ Application error (application_error = 1)</div>
+
+<h3>4.3 Waterfall Metrics</h3>
+
+<div class="waterfall-grid">
+  <div class="wf-card stage1">
+    <div class="wf-card-header">Stage 1: Fraud Pre-Auth (Forter) <span class="badge badge-orange">fraud_pre_auth_result</span></div>
+    <div class="wf-card-body">
+      <table>
+        <thead><tr><th>Metric</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td>Fraud Block Rate</td><td class="mono">REFUSE / total</td></tr>
+          <tr><td>Fraud Accept Rate</td><td class="mono">ACCEPT / total</td></tr>
+          <tr><td>3DS Trigger Rate</td><td class="mono">THREE_DS / total</td></tr>
+          <tr><td>3DS Exemption Rate</td><td class="mono">THREE_DS_EXEMPTION / total</td></tr>
+          <tr><td>Null Fraud Rate</td><td class="mono">NULL / total</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="wf-card stage2">
+    <div class="wf-card-header">Stage 2: 3DS Authentication <span class="badge badge-blue">challenge_issued</span></div>
+    <div class="wf-card-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Denominator: <code>fraud_pre_auth_result = 'THREE_DS'</code></p>
+      <table>
+        <thead><tr><th>Metric</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td>3DS Challenge Rate</td><td class="mono">challenged / 3DS-triggered</td></tr>
+          <tr><td>3DS Frictionless Rate</td><td class="mono">frictionless / 3DS-triggered</td></tr>
+          <tr><td>3DS Pass Rate</td><td class="mono">passed / 3DS-triggered</td></tr>
+          <tr><td>SR — 3DS Challenged</td><td class="mono">successful / challenged</td></tr>
+          <tr><td>SR — 3DS Frictionless</td><td class="mono">successful / frictionless</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="wf-card stage3">
+    <div class="wf-card-header">Stage 3: Sent to Issuer <span class="badge badge-green">sent_to_issuer</span></div>
+    <div class="wf-card-body">
+      <table>
+        <thead><tr><th>Metric</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td>Sent-to-Issuer Rate</td><td class="mono">sent_to_issuer / total</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--muted);margin-top:8px">Not sent = fraud block + 3DS failure + routing gap (<code>payment_processor IS NULL</code>)</p>
+    </div>
+  </div>
+
+  <div class="wf-card stage4">
+    <div class="wf-card-header">Stage 4: Issuer Authorization <span class="badge badge-purple">error_code</span></div>
+    <div class="wf-card-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Denominator: <code>sent_to_issuer = 1</code></p>
+      <table>
+        <thead><tr><th>Metric</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td>Authorization Rate</td><td class="mono">authorized / sent_to_issuer</td></tr>
+          <tr><td>Issuer Decline Rate</td><td class="mono">issuer_declined / sent_to_issuer</td></tr>
+          <tr><td>Gateway Reject Rate</td><td class="mono">gateway_rejected / sent_to_issuer</td></tr>
+          <tr><td>Application Error Rate</td><td class="mono">application_error / sent_to_issuer</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<h3>Error Mix</h3>
+<p>Top error codes by frequency (within declined attempts):</p>
+<pre><span class="kw">SELECT</span>
+  error_code,
+  error_type,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> occurrences,
+  <span class="fn">ROUND</span>(100.0 * <span class="fn">COUNT</span>(*) / <span class="fn">SUM</span>(<span class="fn">COUNT</span>(*)) <span class="kw">OVER</span> (), 2) <span class="kw">AS</span> share_pct
+<span class="kw">FROM</span> production.payments.fact_payment_attempt
+<span class="kw">WHERE</span> customer_attempt_rank = 1
+  <span class="kw">AND</span> payment_initiator_type = <span class="str">'CIT'</span>
+  <span class="kw">AND</span> is_payment_attempt_successful = 0
+  <span class="kw">AND</span> sent_to_issuer = 1
+  <span class="kw">AND</span> payment_attempt_timestamp >= <span class="fn">DATEADD</span>(<span class="str">DAY</span>, -30, <span class="fn">CURRENT_TIMESTAMP</span>())
+<span class="kw">GROUP BY</span> error_code, error_type
+<span class="kw">ORDER BY</span> occurrences <span class="kw">DESC</span></pre>
+
+<!-- ─── RNPL ───────────────────────────────────────────────── -->
+<h3 id="rnpl">4.4 RNPL-Specific Metrics</h3>
+<p>Reserve Now Pay Later has three distinct flows with different dedup rules.</p>
+
+<table>
+  <thead><tr><th>Flow</th><th><code>payment_flow</code></th><th>Initiator</th><th>When</th><th>Dedup Rule</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Authorization</strong></td><td class="mono">rnpl_auth_0</td><td>CIT</td><td>Checkout — $0 auth hold</td><td class="mono">customer_attempt_rank = 1</td></tr>
+    <tr><td><strong>Auto-capture</strong></td><td class="mono">rnpl_auto_capture</td><td>MIT</td><td>T-72h before travel</td><td>No rank filter — need all retries</td></tr>
+    <tr><td><strong>Pay early</strong></td><td class="mono">rnpl_pay_early</td><td>CIT</td><td>Customer elects to pay early</td><td class="mono">customer_attempt_rank = 1</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead><tr><th>Metric</th><th>Formula</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>RNPL Auth SR</td><td class="mono">successful auth / total auth attempts</td><td>CIT only; $0 hold</td></tr>
+    <tr><td>RNPL MIT SR</td><td class="mono">successful captures / total capture attempts</td><td>MIT; NULL fraud is expected</td></tr>
+    <tr><td>RNPL Pay-Early SR</td><td class="mono">successful / total pay-early attempts</td><td>CIT; same mechanics as pay_now</td></tr>
+    <tr><td>RNPL Cart SR</td><td class="mono">paid carts / total RNPL carts</td><td>Combines auth + MIT lifecycle per cart</td></tr>
+    <tr><td>RNPL Cancellation Rate</td><td class="mono">cancelled / total RNPL bookings</td><td>Join to <code>fact_booking</code> with <code>status_id IN (1, 2)</code></td></tr>
+  </tbody>
+</table>
+
+<div class="callout callout-warn">
+  <strong>Critical Rule</strong>
+  Always filter to <code>payment_initiator_type = 'CIT'</code> when computing fraud or 3DS metrics. MIT transactions have no Forter evaluation by design and will inflate NULL fraud rates.
+</div>
+
+<!-- ─── COSTS ──────────────────────────────────────────────── -->
+<h3 id="costs">4.5 Payment Costs</h3>
+<table>
+  <thead><tr><th>Metric</th><th>Formula</th><th>Source Fields</th></tr></thead>
+  <tbody>
+    <tr><td>Total Fee % of GMV</td><td class="mono">SUM(total_fee_eur) / SUM(settled_gmv_eur)</td><td class="mono">total_fee_amount_eur_new</td></tr>
+    <tr><td>Scheme Fee % of GMV</td><td class="mono">SUM(scheme_fee_eur) / SUM(settled_gmv_eur)</td><td class="mono">scheme_fee_amount_eur_new</td></tr>
+    <tr><td>Interchange Fee % of GMV</td><td class="mono">SUM(interchange_fee_eur) / SUM(settled_gmv_eur)</td><td class="mono">interchange_fee_amount_eur_new</td></tr>
+    <tr><td>Acquirer Fee % of GMV</td><td class="mono">SUM(acquirer_fee_eur) / SUM(settled_gmv_eur)</td><td class="mono">acquirer_fee_amount_eur_new</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── DEDUP ──────────────────────────────────────────────── -->
+<h2 id="dedup">5. Deduplication Rules</h2>
+<table>
+  <thead><tr><th>Metric Type</th><th>Filter</th><th>Dedup</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Cart-level SR / conversion</td><td class="mono">customer_attempt_rank = 1, CIT</td><td class="mono">Group by shopping_cart_id, MAX(is_shopping_cart_successful)</td><td>One row per cart</td></tr>
+    <tr><td>First customer attempt SR</td><td class="mono">customer_attempt_rank = 1</td><td>Count rows directly</td><td>Multiple carts per visitor possible</td></tr>
+    <tr><td>First-per-visitor SR</td><td class="mono">customer_attempt_rank = 1</td><td class="mono">QUALIFY ROW_NUMBER() OVER (PARTITION BY visitor_id ORDER BY payment_attempt_timestamp) = 1</td><td>Most robust for A/B tests</td></tr>
+    <tr><td>All customer attempts SR</td><td class="mono">payment_initiator_type = 'CIT'</td><td>Count all CIT rows</td><td>Includes retries</td></tr>
+    <tr><td>System attempt SR</td><td>No rank filter</td><td>All rows</td><td>Routing/fallback diagnostics</td></tr>
+    <tr><td>MIT analysis (RNPL)</td><td class="mono">payment_flow = 'rnpl_auto_capture'</td><td>No rank filter</td><td>Need full retry chain for lifecycle</td></tr>
+    <tr><td>Fraud / 3DS analysis</td><td class="mono">payment_initiator_type = 'CIT'</td><td>Per metric level above</td><td>MIT has no Forter eval</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── DIMENSIONS ─────────────────────────────────────────── -->
+<h2 id="dims">6. Dimensions</h2>
+<p>All metrics should be consistently segmentable by:</p>
+<table>
+  <thead><tr><th>Dimension</th><th>Column</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Country / Region</td><td class="mono">bin_issuer_country_code</td><td>Cards; <code>customer_country_code</code> for APMs/RNPL</td></tr>
+    <tr><td>Platform</td><td class="mono">platform</td><td>iOS, Android, Web</td></tr>
+    <tr><td>Payment Method</td><td class="mono">payment_method</td><td>payment_card, apple_pay, google_pay, paypal, klarna, APMs</td></tr>
+    <tr><td>Card Network</td><td class="mono">payment_method_variant</td><td>VISA, MASTERCARD, AMEX, etc.</td></tr>
+    <tr><td>Payment Flow</td><td class="mono">payment_flow</td><td>pay_now, rnpl_auth_0, rnpl_pay_early, rnpl_auto_capture</td></tr>
+    <tr><td>Payment Terms</td><td class="mono">payment_terms</td><td>pay_now, pay_later</td></tr>
+    <tr><td>Amount Bucket</td><td>Derived from <code>amount_eur</code></td><td>&lt;50, 50-200, 200-500, 500-1000, 1000+</td></tr>
+    <tr><td>Processor</td><td class="mono">payment_processor</td><td>ADYEN, CHECKOUT, JPMC, NULL</td></tr>
+    <tr><td>New / Repeat</td><td>Derived from customer data</td><td>Requires join to customer tables</td></tr>
+    <tr><td>Routing Rule</td><td>Derived: country + currency + network</td><td>See routing rule classification</td></tr>
+    <tr><td>Card Funding Type</td><td class="mono">bin_account_funding_type</td><td>CREDIT, DEBIT, PREPAID</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── MIGRATION ──────────────────────────────────────────── -->
+<h2 id="migration">7. Column Migration: Old Explore &rarr; New Framework</h2>
+<p>For teams migrating from <code>production.analytics.fact_payment</code>:</p>
+<table>
+  <thead><tr><th>Old Column (<code>fact_payment</code>)</th><th>New Column (<code>fact_payment_attempt</code>)</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">author_boolean</td><td class="mono">is_payment_attempt_successful</td></tr>
+    <tr><td class="mono">fraud_check_success_outcome</td><td class="mono">fraud_pre_auth_result</td></tr>
+    <tr><td class="mono">3ds_outcome</td><td class="mono">three_ds_status</td></tr>
+    <tr><td class="mono">booked</td><td class="mono">is_shopping_cart_successful</td></tr>
+    <tr><td class="mono">cart_booked</td><td class="mono">is_shopping_cart_successful <span style="color:var(--muted)">(same)</span></td></tr>
+    <tr><td class="mono">payment_initiated</td><td class="mono">payment_initiated <span style="color:var(--muted)">(same name)</span></td></tr>
+    <tr><td class="mono">sent_to_issuer <span style="color:var(--muted)">(dim)</span></td><td class="mono">sent_to_issuer <span style="color:var(--muted)">(int flag)</span></td></tr>
+    <tr><td class="mono">gmv_eur</td><td class="mono">amount_eur</td></tr>
+    <tr><td class="mono">scheme_fee_amount_eur_new</td><td class="mono">scheme_fee_amount_eur_new <span style="color:var(--muted)">(same)</span></td></tr>
+    <tr><td class="mono">interchange_fee_amount_eur_new</td><td class="mono">interchange_fee_amount_eur_new <span style="color:var(--muted)">(same)</span></td></tr>
+    <tr><td class="mono">total_fee_amount_eur_new</td><td class="mono">total_fee_amount_eur_new <span style="color:var(--muted)">(same)</span></td></tr>
+  </tbody>
+</table>
+
+<!-- ─── ARCHITECTURE ───────────────────────────────────────── -->
+<h2 id="arch">8. Target Data Model Architecture</h2>
+<p><code>fact_payment_attempt</code>, <code>payment_initiation_events</code>, and <code>fact_payment_shopping_cart</code> are available today. The rest are the target architecture.</p>
+<table>
+  <thead><tr><th>Model</th><th>Grain</th><th>Status</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">fact_payment_attempt</td><td>1 row per attempt</td><td><span class="badge badge-green">Available</span></td><td>All attempt-, cart-, and visitor-level metrics via dedup</td></tr>
+    <tr><td class="mono">payment_initiation_events</td><td>1 row per initiation event</td><td><span class="badge badge-green">Available</span></td><td>Visitor SR, initiation tracking</td></tr>
+    <tr><td class="mono">fact_payment_shopping_cart</td><td>1 row per cart</td><td><span class="badge badge-green">Available</span></td><td>Pre-aggregated cart outcomes, waterfall summary, retry/recovery, RNPL lifecycle</td></tr>
+    <tr><td class="mono">fact_payment_page_visit</td><td>1 row per page visit</td><td><span class="badge badge-purple">Future</span></td><td>Initiation area metrics (exploration, drop-off)</td></tr>
+    <tr><td class="mono">fact_customer_payment_attempt</td><td>1 row per customer attempt</td><td><span class="badge badge-purple">Future</span></td><td>Customer-visible attempt outcomes</td></tr>
+    <tr><td class="mono">fact_system_payment_attempt</td><td>1 row per system attempt</td><td><span class="badge badge-purple">Future</span></td><td>Routing/fallback internal diagnostics</td></tr>
+    <tr><td class="mono">fact_processor_payment_attempt</td><td>1 row per processor hit</td><td><span class="badge badge-purple">Future</span></td><td>Acquirer comparison, observed auth rates</td></tr>
+    <tr><td class="mono">fact_payment</td><td>1 row per payment_reference</td><td><span class="badge badge-purple">Future</span></td><td>Financial/settlement view, fees</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top:40px; font-size:12px; color:var(--muted);">Last updated: May 2026</p>
+
+</body>
+</html>
